@@ -3,6 +3,7 @@ import 'package:nirikshan_recon/models/dump_response.dart';
 import 'package:nirikshan_recon/utils/api_client.dart';
 import 'package:nirikshan_recon/utils/colors.dart';
 import 'package:nirikshan_recon/utils/helpers.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:intl/intl.dart';
 
@@ -14,14 +15,16 @@ class HomeWidget extends StatefulWidget {
 }
 
 class _HomeWidgetState extends State<HomeWidget> {
-  ApiClient apiClient = ApiClient(
-    "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MzczOTQ2MjMsImlhdCI6MTYzNzMwODIyMywidWlkIjoiNjE5NjdiYmI3N2M1NjZkY2YwOTY5OTg2IiwidXNlcm5hbWUiOiJhZG1pbiJ9.ScYsAlch8mVVUsKy6kdqz9FXKmAcaYoBHVuEf4gAKbHfNSoD4INkrTd9joEHnDRZO3n-A363tnJfPUEdKeeaVQ",
-    "http://192.168.1.4:3000",
-  );
   DumpResponse? dumpResponse;
   List<ChartData>? chartData;
+  String? userName;
 
   _getDumpData(String site) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? username = prefs.getString('name');
+    String? jwtToken = prefs.getString('token');
+    String? baseUrl = prefs.getString('baseUrl');
+    ApiClient apiClient = ApiClient(jwtToken, baseUrl!);
     var data = await apiClient.getDumpData(site);
     var blackLists = data.data.blacklistLength;
     var total = data.data.totalLength;
@@ -32,6 +35,7 @@ class _HomeWidgetState extends State<HomeWidget> {
     ChartData whiteData = ChartData("Whitelisted requests", whitePercentage);
     List<ChartData> chartDataList = [blackData, whiteData];
     setState(() {
+      userName = username;
       chartData = chartDataList;
       dumpResponse = data;
     });
@@ -141,9 +145,9 @@ class _HomeWidgetState extends State<HomeWidget> {
         children: [
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: const Text(
-              "Hello User",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            child: Text(
+              "Hello $userName",
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ),
           IconButton(

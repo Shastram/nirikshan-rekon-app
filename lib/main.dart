@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:nirikshan_recon/home.dart';
+import 'package:nirikshan_recon/pages/home.dart';
+import 'package:nirikshan_recon/pages/login.dart';
+import 'package:nirikshan_recon/utils/colors.dart';
 
 void main() {
   runApp(const MyApp());
@@ -22,9 +24,9 @@ class MyApp extends StatelessWidget {
               ),
         ),
         brightness: Brightness.dark,
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.grey,
       ),
-      home: const HomeWidget(),
+      home: const LoginPage(),
     );
   }
 }

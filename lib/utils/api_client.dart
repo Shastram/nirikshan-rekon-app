@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
+import 'package:nirikshan_recon/models/auth_response.dart';
 import 'package:nirikshan_recon/models/dump_response.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiClient {
   late Dio dio;
@@ -20,6 +22,24 @@ class ApiClient {
       return DumpResponse.fromJson(response.data);
     } else {
       throw Future.error('Failed to load dump data');
+    }
+  }
+
+  Future<AuthResponse> login(String username, String password) async {
+    try {
+      var response = await dio.post("$baseUrl/login",
+          data: {"username": username, "password": password});
+      if (response.statusCode == 200) {
+        var resp = AuthResponse.fromJson(response.data);
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('token', resp.data!.jwtToken!);
+        await prefs.setString('name', resp.data!.user!.name!);
+        return resp;
+      } else {
+        throw Future.error('Failed to login');
+      }
+    } catch (e) {
+      throw Future.error('Failed to login');
     }
   }
 }
