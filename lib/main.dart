@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:nirikshan_recon/home.dart';
 
 void main() {
@@ -14,6 +15,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Nirikshan Recon',
       theme: ThemeData(
+        textTheme: GoogleFonts.jetBrainsMonoTextTheme(
+          Theme.of(context).textTheme.apply(
+                bodyColor: Colors.white,
+                displayColor: Colors.white,
+              ),
+        ),
         brightness: Brightness.dark,
         primarySwatch: Colors.blue,
       ),

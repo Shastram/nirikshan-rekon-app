@@ -14,11 +14,9 @@ class DumpResponse {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['status'] = this.status;
-    if (this.data != null) {
-      data['data'] = this.data.toJson();
-    }
-    data['message'] = this.message;
+    data['status'] = status;
+    data['data'] = this.data.toJson();
+    data['message'] = message;
     return data;
   }
 }
@@ -37,7 +35,7 @@ class Data {
     if (json['logs'] != null) {
       logs = <Logs>[];
       json['logs'].forEach((v) {
-        logs.add(new Logs.fromJson(v));
+        logs.add(Logs.fromJson(v));
       });
     }
     totalLength = json['total_length'];

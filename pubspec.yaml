@@ -38,6 +38,7 @@ dependencies:
   dio: ^4.0.3
   shared_preferences: ^2.0.8
   timeago: ^3.1.0
+  google_fonts: ^2.1.0
 
 dev_dependencies:
   flutter_test:
