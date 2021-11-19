@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nirikshan_recon/models/dump_response.dart';
+import 'package:nirikshan_recon/pages/base_url.dart';
 import 'package:nirikshan_recon/utils/api_client.dart';
 import 'package:nirikshan_recon/utils/colors.dart';
 import 'package:nirikshan_recon/utils/helpers.dart';
@@ -23,7 +24,7 @@ class _HomeWidgetState extends State<HomeWidget> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? username = prefs.getString('name');
     String? jwtToken = prefs.getString('token');
-    String? baseUrl = prefs.getString('baseUrl');
+    String? baseUrl = prefs.getString('base');
     ApiClient apiClient = ApiClient(jwtToken, baseUrl!);
     var data = await apiClient.getDumpData(site);
     var blackLists = data.data.blacklistLength;
@@ -151,7 +152,15 @@ class _HomeWidgetState extends State<HomeWidget> {
             ),
           ),
           IconButton(
-            onPressed: () {},
+            onPressed: () async {
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              await prefs.clear();
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                  builder: (BuildContext context) => const UrlInputPage(),
+                ),
+              );
+            },
             icon: const Icon(Icons.exit_to_app),
           ),
         ],

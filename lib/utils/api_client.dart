@@ -34,6 +34,7 @@ class ApiClient {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('token', resp.data!.jwtToken!);
         await prefs.setString('name', resp.data!.user!.name!);
+        await prefs.setBool('loggedIn', true);
         return resp;
       } else {
         throw Future.error('Failed to login');

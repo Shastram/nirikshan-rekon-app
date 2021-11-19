@@ -1,31 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:nirikshan_recon/pages/home.dart';
+import 'package:nirikshan_recon/pages/login.dart';
 import 'package:nirikshan_recon/utils/api_client.dart';
 import 'package:nirikshan_recon/utils/colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+class UrlInputPage extends StatefulWidget {
+  const UrlInputPage({Key? key}) : super(key: key);
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  UrlInputPageState createState() => UrlInputPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class UrlInputPageState extends State<UrlInputPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool islogging = false;
-  Future<bool> _apiCall(String username, String password) async {
-    try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      var api = ApiClient(null, prefs.getString("base") ?? "");
-      var resp = await api.login(username, password);
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,35 +70,20 @@ class _LoginPageState extends State<LoginPage> {
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(primary: purpleThemeColor),
         onPressed: () async {
-          setState(() {
-            islogging = true;
-          });
-          var username = _usernameController.text;
-          var password = _passwordController.text;
-          try {
-            var result = await _apiCall(username, password);
-            if (result) {
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(
-                  builder: (BuildContext context) => const HomeWidget(),
-                ),
-              );
-            } else {
-              setState(() {
-                islogging = false;
-              });
-              const snackBar = SnackBar(content: Text('Login Failed'));
-              ScaffoldMessenger.of(context).showSnackBar(snackBar);
-            }
-          } catch (e) {
-            setState(() {
-              islogging = false;
-            });
-            const snackBar = SnackBar(content: Text('Login Failed'));
+          if (Uri.parse(_passwordController.text).isAbsolute) {
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            prefs.setString('base', _passwordController.text);
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (BuildContext context) => const LoginPage(),
+              ),
+            );
+          } else {
+            const snackBar = SnackBar(content: Text('Enter Valid URL'));
             ScaffoldMessenger.of(context).showSnackBar(snackBar);
           }
         },
-        child: const Text("Login"),
+        child: const Text("Next"),
       ),
     );
   }
@@ -127,33 +102,14 @@ class _LoginPageState extends State<LoginPage> {
               padding:
                   const EdgeInsets.symmetric(vertical: 8.0, horizontal: 24),
               child: TextFormField(
-                validator: (String? value) {
-                  if (value!.trim().isEmpty) {
-                    return 'username is required';
-                  }
-                },
-                controller: _usernameController,
-                decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Enter your username'),
-              ),
-            ),
-            const SizedBox(
-              height: 16,
-            ),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 24),
-              child: TextFormField(
                 controller: _passwordController,
                 validator: (String? value) {
                   if (value!.trim().isEmpty) {
-                    return 'Password is required';
+                    return 'URL is required';
                   }
                 },
                 decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Enter your password'),
+                    border: OutlineInputBorder(), labelText: 'Enter your URL'),
               ),
             ),
           ],
