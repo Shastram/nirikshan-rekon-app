@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:nirikshan_recon/models/dump_response.dart';
+import 'package:nirikshan_recon/utils/api_client.dart';
+import 'package:nirikshan_recon/utils/helpers.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class HomeWidget extends StatefulWidget {
@@ -9,6 +12,31 @@ class HomeWidget extends StatefulWidget {
 }
 
 class _HomeWidgetState extends State<HomeWidget> {
+  ApiClient apiClient = ApiClient(
+    "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MzczOTQ2MjMsImlhdCI6MTYzNzMwODIyMywidWlkIjoiNjE5NjdiYmI3N2M1NjZkY2YwOTY5OTg2IiwidXNlcm5hbWUiOiJhZG1pbiJ9.ScYsAlch8mVVUsKy6kdqz9FXKmAcaYoBHVuEf4gAKbHfNSoD4INkrTd9joEHnDRZO3n-A363tnJfPUEdKeeaVQ",
+    "http://192.168.1.4:3000",
+  );
+  DumpResponse? dumpResponse;
+
+  _getDumpData(String site) async {
+    var data = await apiClient.getDumpData(site);
+    setState(() {
+      dumpResponse = data;
+    });
+    return data;
+  }
+
+  String _convTime(String date) {
+    var dateTime = DateTime.parse(date);
+    return convertToAgo(dateTime);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getDumpData("google");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,7 +52,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                 builder:
                     (BuildContext context, ScrollController scrollController) {
                   return Container(
-                    padding: const EdgeInsets.only(top: 32),
+                    padding: const EdgeInsets.only(top: 16),
                     decoration: const BoxDecoration(
                       color: Colors.blue,
                       borderRadius: BorderRadius.only(
@@ -32,7 +60,9 @@ class _HomeWidgetState extends State<HomeWidget> {
                         topRight: Radius.circular(20),
                       ),
                     ),
-                    child: _buildList(scrollController),
+                    child: dumpResponse == null
+                        ? const CircularProgressIndicator()
+                        : _buildList(scrollController, dumpResponse!.data.logs),
                   );
                 },
               ),
@@ -43,9 +73,9 @@ class _HomeWidgetState extends State<HomeWidget> {
     );
   }
 
-  Widget _buildList(ScrollController scrollController) {
+  Widget _buildList(ScrollController scrollController, List<Logs> logs) {
     return ListView.builder(
-      itemCount: 25,
+      itemCount: logs.length,
       controller: scrollController,
       itemBuilder: (BuildContext context, int index) {
         return Padding(
@@ -56,10 +86,12 @@ class _HomeWidgetState extends State<HomeWidget> {
               height: 50,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
-                  Text("Time"),
-                  Text("Device"),
-                  Text("Blacklist"),
+                children: [
+                  Text(_convTime(logs[index].time)),
+                  Text(logs[index].ip),
+                  logs[index].isBlackListed
+                      ? const Icon(Icons.block)
+                      : const Icon(Icons.check),
                 ],
               ),
             ),
