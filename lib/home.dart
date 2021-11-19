@@ -121,8 +121,8 @@ class _HomeWidgetState extends State<HomeWidget> {
                     Text(_convTime(logs[index].time)),
                     Text(logs[index].ip),
                     logs[index].isBlackListed
-                        ? const Icon(Icons.block)
-                        : const Icon(Icons.check),
+                        ? const Icon(Icons.block, color: Colors.red)
+                        : const Icon(Icons.check, color: Colors.green),
                   ],
                 ),
               ),
@@ -220,6 +220,7 @@ _showBottomModalSheet(BuildContext context, Logs data) async {
 
   return await showModalBottomSheet<void>(
       context: context,
+      backgroundColor: greyThemeColor,
       builder: (BuildContext ctx) {
         return Column(
           mainAxisSize: MainAxisSize.min,
