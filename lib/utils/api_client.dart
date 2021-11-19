@@ -43,4 +43,23 @@ class ApiClient {
       throw Future.error('Failed to login');
     }
   }
+
+  Future<bool> signup(
+      String username, String password, String name, String email) async {
+    try {
+      var response = await dio.post("$baseUrl/signup", data: {
+        "username": username,
+        "password": password,
+        "name": name,
+        "email": email,
+      });
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        throw Future.error('Failed to login');
+      }
+    } catch (e) {
+      throw Future.error('Failed to login');
+    }
+  }
 }

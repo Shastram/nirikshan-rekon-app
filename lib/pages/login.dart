@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:nirikshan_recon/pages/home.dart';
+import 'package:nirikshan_recon/pages/signup.dart';
 import 'package:nirikshan_recon/utils/api_client.dart';
 import 'package:nirikshan_recon/utils/colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -60,10 +61,33 @@ class _LoginPageState extends State<LoginPage> {
             ),
             Expanded(
               flex: 1,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              child: Column(
                 children: [
-                  islogging ? const CircularProgressIndicator() : loginButton(),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const SignupPage(),
+                          ),
+                        );
+                      },
+                      child: const Text(
+                        "Don't have an account?",
+                      ),
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      islogging
+                          ? const CircularProgressIndicator()
+                          : loginButton(),
+                    ],
+                  ),
                 ],
               ),
             ),
